@@ -1,46 +1,113 @@
 import * as PIXI from 'pixi.js';
 
-async function HelloWorld() {
-	const div = document.createElement('div');
-	const h1 = document.createElement('h1');
-	const h1Text = document.createTextNode('Hello');
+const rect = new PIXI.Graphics();
+const app = new PIXI.Application({
+	width: 1000, // default: 800
+	height: 800, // default: 600
+	antialias: true // default: false
+});
 
-	div.className = 'main';
-	h1.appendChild(h1Text);
-	document.body.appendChild(div);
-	div.appendChild(h1);
+function keyboard(value) {
+	const key = {};
+	key.value = value;
+	key.isDown = false;
+	key.isUp = true;
+	key.press = undefined;
+	key.release = undefined;
+	// The `downHandler`
+	key.downHandler = event => {
+		if (event.key === key.value) {
+			if (key.isUp && key.press) key.press();
+			key.isDown = true;
+			key.isUp = false;
+			event.preventDefault();
+		}
+	};
 
+	// The `upHandler`
+	key.upHandler = event => {
+		if (event.key === key.value) {
+			if (key.isDown && key.release) key.release();
+			key.isDown = false;
+			key.isUp = true;
+			event.preventDefault();
+		}
+	};
+
+	// Attach event listeners
+	const downListener = key.downHandler.bind(key);
+	const upListener = key.upHandler.bind(key);
+
+	window.addEventListener('keydown', downListener, false);
+	window.addEventListener('keyup', upListener, false);
+
+	// Detach event listeners
+	key.unsubscribe = () => {
+		window.removeEventListener('keydown', downListener);
+		window.removeEventListener('keyup', upListener);
+	};
+
+	return key;
+}
+
+let sum = 0;
+
+function gameLoop(delta) {
+	rect.angle += 4 * delta;
+	rect.x += rect.vx;
+	sum += 1;
+	if (sum % 60 === 0) {
+		const dot = new PIXI.Graphics();
+		dot.beginFill(0x9b59b6); // Purple
+		dot.drawCircle(0, 0, 10);
+		dot.endFill();
+		dot.x = rect.x;
+		dot.y = rect.y;
+		app.stage.addChild(dot);
+	}
+}
+
+function HelloWorld() {
 	// The application will create a renderer using WebGL, if possible,
 	// with a fallback to a canvas render. It will also setup the ticker
 	// and the root stage PIXI.Container
-	const app = new PIXI.Application();
+
+	rect.vx = 0;
+	const keyLeft = keyboard('ArrowLeft');
+	keyLeft.press = () => {
+		rect.vx = -3;
+	};
+
+	const keyRight = keyboard('ArrowRight');
+	keyRight.press = () => {
+		rect.vx = 3;
+	};
+
+	keyLeft.release = () => {
+		if (!keyRight.isDown) rect.vx = 0;
+	};
+
+	keyRight.release = () => {
+		if (!keyLeft.isDown) rect.vx = 0;
+	};
 
 	// The application will create a canvas element for you that you
 	// can then insert into the DOM
 	document.body.appendChild(app.view);
 
-	// load the texture we need
-	app.loader.add('bunny', 'bunny.png').load((loader, resources) => {
-		// This creates a texture from a 'bunny.png' image
-		const bunny = new PIXI.Sprite(resources.bunny.texture);
+	rect.pivot.x = 40;
+	rect.pivot.y = 40;
+	rect.beginFill(0x9b59b6); // Purple
 
-		// Setup the position of the bunny
-		bunny.x = app.renderer.width / 2;
-		bunny.y = app.renderer.height / 2;
+	// Draw a rectangle
+	rect.drawRect(0, 0, 80, 80); // drawRect(x, y, width, height)
+	rect.endFill();
+	rect.x = 100;
+	rect.y = 100;
 
-		// Rotate around the center
-		bunny.anchor.x = 0.5;
-		bunny.anchor.y = 0.5;
+	app.stage.addChild(rect);
 
-		// Add the bunny to the scene we are building
-		app.stage.addChild(bunny);
-
-		// Listen for frame updates
-		app.ticker.add(() => {
-			// each frame we spin the bunny around a bit
-			bunny.rotation += 0.01;
-		});
-	});
+	app.ticker.add(delta => gameLoop(delta));
 }
 
 export default HelloWorld;
