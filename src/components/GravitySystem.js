@@ -21,7 +21,7 @@ class GravitySystem {
 					const accVec = Vector2D.sub(a.pos, a1.pos)
 						.normalize()
 						.mult(acc);
-					a1.acc.add(accVec);
+					a1.accelerate(accVec);
 				}
 			});
 		});

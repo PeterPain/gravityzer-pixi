@@ -10,6 +10,10 @@ class Attractor {
 		this.pol = polarity;
 	}
 
+	accelerate(v) {
+		this.acc.add(v);
+	}
+
 	update() {
 		this.spd.add(this.acc);
 		this.pos.add(this.spd);

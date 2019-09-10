@@ -26,10 +26,6 @@ class KeyHandler {
 			}
 		};
 
-		// Attach event listeners
-		// const downListener = this.downHandler.bind(this);
-		// const upListener = this.upHandler.bind(this);
-
 		window.addEventListener('keydown', this.downHandler, false);
 		window.addEventListener('keyup', this.upHandler, false);
 

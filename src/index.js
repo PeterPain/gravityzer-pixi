@@ -26,15 +26,11 @@ const ship = new SpaceShip(app, new Vector2D(200, 200));
 gravSys.add(ship);
 
 gravSys.add(
-	new Particle(app, new Vector2D(500, 500), new Vector2D(0, 0), 50, true)
+	new Particle(app, new Vector2D(300, 400), new Vector2D(0, 0), 150, true)
 );
 
 gravSys.add(
-	new Particle(app, new Vector2D(500, 400), new Vector2D(2, 0), 20, false)
-);
-
-gravSys.add(
-	new Particle(app, new Vector2D(500, 400), new Vector2D(-3, 0), 20, false)
+	new Particle(app, new Vector2D(1200, 400), new Vector2D(0, 0), 150, true)
 );
 
 initControls();
@@ -74,9 +70,26 @@ function initControls() {
 
 function gameLoop(delta) {
 	stats.begin();
-	// if (frmCnt % 120 === 0) {
-	// 	gravSys.add(new Particle(app, 500, 500, 50));
-	// }
+	if (frmCnt % 120 === 0) {
+		gravSys.add(
+			new Particle(
+				app,
+				new Vector2D(300, 500),
+				new Vector2D(Math.random() * 5, Math.random() * -5),
+				Math.random() * 20,
+				false
+			)
+		);
+		gravSys.add(
+			new Particle(
+				app,
+				new Vector2D(1200, 300),
+				new Vector2D(Math.random() * -5, Math.random() * 5),
+				Math.random() * 20,
+				false
+			)
+		);
+	}
 	gravSys.update(frmCnt);
 	stats.end();
 	frmCnt += 1;
