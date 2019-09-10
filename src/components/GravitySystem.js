@@ -1,7 +1,7 @@
 import Vector2D from './Vector2D';
 
-const G = 6.674;
-const A = 25;
+const G = 6.674; // gravity constant
+const A = 25; // dampening factor for close distances of two objects
 
 class GravitySystem {
 	constructor() {

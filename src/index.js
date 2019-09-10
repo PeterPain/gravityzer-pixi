@@ -1,7 +1,14 @@
 import * as PIXI from 'pixi.js';
+import Stats from 'stats.js';
 import SpaceShip from './components/SpaceShip';
+import Particle from './components/Particle';
 import GravitySystem from './components/GravitySystem';
 import './main.css';
+
+const stats = new Stats();
+stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+
+let frmCnt = 0;
 
 const app = new PIXI.Application({
 	width: 1000, // default: 800
@@ -9,6 +16,7 @@ const app = new PIXI.Application({
 	antialias: true // default: false
 });
 document.body.appendChild(app.view);
+document.body.appendChild(stats.dom);
 
 const gravSys = new GravitySystem();
 
@@ -17,6 +25,8 @@ gravSys.add(ship);
 
 const ship2 = new SpaceShip(app, 600, 600);
 gravSys.add(ship2);
+
+gravSys.add(new Particle(app, 500, 500, 50));
 
 initControls();
 
@@ -98,5 +108,11 @@ function initControls() {
 }
 
 function gameLoop(delta) {
+	stats.begin();
+	// if (frmCnt % 120 === 0) {
+	// 	gravSys.add(new Particle(app, 500, 500, 50));
+	// }
 	gravSys.update();
+	stats.end();
+	frmCnt += 1;
 }
