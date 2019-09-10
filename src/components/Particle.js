@@ -1,12 +1,11 @@
 import * as PIXI from 'pixi.js';
 import Attractor from './Attractor';
-import TrailPNG from '../assets/trail.png';
-import { get } from 'https';
+import TrailPNG from '../assets/trail2.png';
 
 class Particle extends Attractor {
-	constructor(app, posX, posY, mass) {
+	constructor(app, pos, spd, mass, isStatic = false, polarity = 0) {
 		// init gravity
-		super(posX, posY, mass, false, 0);
+		super(pos, spd, mass, isStatic, polarity);
 
 		// init graphics
 		const col = getRandomColor();
@@ -21,14 +20,14 @@ class Particle extends Attractor {
 		// init trail
 		this.history = [];
 		this.upd = false;
-		this.historySize = 150;
+		this.historySize = 100;
 		for (let i = 0; i < this.historySize; i += 1) {
 			this.history.push(new PIXI.Point(this.pos.x, this.pos.y));
 		}
 		const rope = new PIXI.SimpleRope(PIXI.Texture.from(TrailPNG), this.history);
 		rope.tint = col;
 		rope.alpha = 0.75;
-		rope.blendmode = PIXI.BLEND_MODES.ADD;
+		// rope.blendmode = PIXI.BLEND_MODES.ADD;
 		app.stage.addChild(rope);
 	}
 
@@ -48,9 +47,9 @@ class Particle extends Attractor {
 }
 
 function getRandomColor() {
-	var letters = '0123456789ABCDEF';
-	var color = '0x';
-	for (var i = 0; i < 6; i++) {
+	const letters = '0123456789ABCDEF';
+	let color = '0x';
+	for (let i = 0; i < 6; i += 1) {
 		color += letters[Math.floor(Math.random() * 16)];
 	}
 	return color;

@@ -1,9 +1,9 @@
 import Vector2D from './Vector2D';
 
 class Attractor {
-	constructor(posX, posY, mass, isStatic, polarity) {
-		this.pos = new Vector2D(posX, posY);
-		this.spd = new Vector2D(0, 0);
+	constructor(pos, spd, mass, isStatic = false, polarity = 0) {
+		this.pos = pos;
+		this.spd = spd;
 		this.acc = new Vector2D(0, 0);
 		this.m = mass;
 		this.isStatic = isStatic;

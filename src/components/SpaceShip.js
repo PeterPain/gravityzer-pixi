@@ -2,13 +2,13 @@ import * as PIXI from 'pixi.js';
 import Attractor from './Attractor';
 import Vector2D from './Vector2D';
 
-import TrailPNG from '../assets/trail.png';
+import TrailPNG from '../assets/trail2.png';
 import ShipPNG from '../assets/ship.png';
 
 class SpaceShip extends Attractor {
-	constructor(app, posX, posY) {
+	constructor(app, pos) {
 		// init gravity
-		super(posX, posY, 25, false, 0);
+		super(pos, new Vector2D(0, 0), 0);
 
 		// init angle and thrust
 		this.angle = 0;
@@ -26,7 +26,7 @@ class SpaceShip extends Attractor {
 
 		// init trail
 		this.history = [];
-		this.historySize = 20;
+		this.historySize = 200;
 		for (let i = 0; i < this.historySize; i += 1) {
 			this.history.push(new PIXI.Point(this.pos.x, this.pos.y));
 		}
