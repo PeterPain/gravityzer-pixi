@@ -2,7 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 require('@babel/register');
 
-const publicPath = path.resolve('/public');
+const publicPath = path.join(__dirname, '/public');
 const config = {
 	entry: ['@babel/polyfill', './src/index.js'],
 	output: {
@@ -19,6 +19,10 @@ const config = {
 			{
 				test: /\.css$/,
 				use: ['style-loader', 'css-loader']
+			},
+			{
+				test: /\.(png|svg|jpg|gif)$/,
+				use: ['file-loader']
 			}
 		]
 	},

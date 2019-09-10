@@ -8,16 +8,17 @@ const app = new PIXI.Application({
 	height: 800, // default: 600
 	antialias: true // default: false
 });
+document.body.appendChild(app.view);
+
+const gravSys = new GravitySystem();
 
 const ship = new SpaceShip(app, 200, 200);
-const gravSys = new GravitySystem();
 gravSys.add(ship);
 
-initControls();
+const ship2 = new SpaceShip(app, 600, 600);
+gravSys.add(ship2);
 
-// The application will create a canvas element for you that you
-// can then insert into the DOM
-document.body.appendChild(app.view);
+initControls();
 
 app.ticker.add(delta => gameLoop(delta));
 
@@ -28,6 +29,7 @@ function keyboard(value) {
 	key.isUp = true;
 	key.press = undefined;
 	key.release = undefined;
+
 	// The `downHandler`
 	key.downHandler = event => {
 		if (event.key === key.value) {

@@ -27,7 +27,7 @@ class Vector2D {
 		return this;
 	}
 
-	subtract(v) {
+	sub(v) {
 		if (v instanceof Vector2D) {
 			this.x -= v.x;
 			this.y -= v.y;
@@ -38,7 +38,7 @@ class Vector2D {
 		return this;
 	}
 
-	multiply(v) {
+	mult(v) {
 		if (v instanceof Vector2D) {
 			this.x *= v.x;
 			this.y *= v.y;
@@ -66,6 +66,10 @@ class Vector2D {
 
 	dot(v) {
 		return this.x * v.x + this.y * v.y;
+	}
+
+	dist(v) {
+		return Vector2D.sub(this, v).length();
 	}
 
 	rotate(deg) {
@@ -133,12 +137,12 @@ class Vector2D {
 		return new Vector2D(a.x + b, a.y + b);
 	}
 
-	static subtract(a, b) {
+	static sub(a, b) {
 		if (b instanceof Vector2D) return new Vector2D(a.x - b.x, a.y - b.y);
 		return new Vector2D(a.x - b, a.y - b);
 	}
 
-	static multiply(a, b) {
+	static mult(a, b) {
 		if (b instanceof Vector2D) return new Vector2D(a.x * b.x, a.y * b.y);
 		return new Vector2D(a.x * b, a.y * b);
 	}
