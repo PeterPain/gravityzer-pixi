@@ -12,7 +12,7 @@ class GravitySystem {
 		this.members.push(o);
 	}
 
-	update() {
+	update(frmCnt) {
 		this.members.forEach(a => {
 			this.members.forEach(a1 => {
 				if (a !== a1) {
@@ -27,7 +27,7 @@ class GravitySystem {
 		});
 
 		this.members.forEach(a => {
-			a.update();
+			a.update(frmCnt);
 		});
 	}
 }

@@ -3,6 +3,7 @@ import Stats from 'stats.js';
 import SpaceShip from './components/SpaceShip';
 import Particle from './components/Particle';
 import GravitySystem from './components/GravitySystem';
+import KeyHandler from './components/KeyHandler';
 import './main.css';
 
 const stats = new Stats();
@@ -26,64 +27,20 @@ gravSys.add(ship);
 const ship2 = new SpaceShip(app, 600, 600);
 gravSys.add(ship2);
 
-gravSys.add(new Particle(app, 500, 500, 50));
+gravSys.add(new Particle(app, 500, 500, 10));
 
 initControls();
 
 app.ticker.add(delta => gameLoop(delta));
 
-function keyboard(value) {
-	const key = {};
-	key.value = value;
-	key.isDown = false;
-	key.isUp = true;
-	key.press = undefined;
-	key.release = undefined;
-
-	// The `downHandler`
-	key.downHandler = event => {
-		if (event.key === key.value) {
-			if (key.isUp && key.press) key.press();
-			key.isDown = true;
-			key.isUp = false;
-			event.preventDefault();
-		}
-	};
-
-	// The `upHandler`
-	key.upHandler = event => {
-		if (event.key === key.value) {
-			if (key.isDown && key.release) key.release();
-			key.isDown = false;
-			key.isUp = true;
-			event.preventDefault();
-		}
-	};
-
-	// Attach event listeners
-	const downListener = key.downHandler.bind(key);
-	const upListener = key.upHandler.bind(key);
-
-	window.addEventListener('keydown', downListener, false);
-	window.addEventListener('keyup', upListener, false);
-
-	// Detach event listeners
-	key.unsubscribe = () => {
-		window.removeEventListener('keydown', downListener);
-		window.removeEventListener('keyup', upListener);
-	};
-
-	return key;
-}
-
 function initControls() {
 	// LEFT RIGHT
-	const keyLeft = keyboard('ArrowLeft');
+	const keyLeft = new KeyHandler('ArrowLeft');
 	keyLeft.press = () => {
 		ship.vrot = -3;
 	};
 
-	const keyRight = keyboard('ArrowRight');
+	const keyRight = new KeyHandler('ArrowRight');
 	keyRight.press = () => {
 		ship.vrot = 3;
 	};
@@ -97,7 +54,7 @@ function initControls() {
 	};
 
 	// UP DOWN
-	const keyUp = keyboard('ArrowUp');
+	const keyUp = new KeyHandler('ArrowUp');
 	keyUp.press = () => {
 		ship.thrust = 0.1;
 	};
@@ -112,7 +69,7 @@ function gameLoop(delta) {
 	// if (frmCnt % 120 === 0) {
 	// 	gravSys.add(new Particle(app, 500, 500, 50));
 	// }
-	gravSys.update();
+	gravSys.update(frmCnt);
 	stats.end();
 	frmCnt += 1;
 }

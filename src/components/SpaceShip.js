@@ -8,12 +8,13 @@ import ShipPNG from '../assets/ship.png';
 class SpaceShip extends Attractor {
 	constructor(app, posX, posY) {
 		// init gravity
-		super(posX, posY, 100, false, 0);
+		super(posX, posY, 25, false, 0);
 
 		// init angle and thrust
 		this.angle = 0;
 		this.vrot = 0;
 		this.thrust = 0;
+		this.dir = new Vector2D(1, 0);
 
 		// init ship graphics
 		this.pixi = new PIXI.Sprite(PIXI.Texture.from(ShipPNG));
@@ -25,7 +26,6 @@ class SpaceShip extends Attractor {
 
 		// init trail
 		this.history = [];
-		this.upd = false;
 		this.historySize = 20;
 		for (let i = 0; i < this.historySize; i += 1) {
 			this.history.push(new PIXI.Point(this.pos.x, this.pos.y));
@@ -35,15 +35,16 @@ class SpaceShip extends Attractor {
 		app.stage.addChild(rope);
 	}
 
-	update() {
+	update(frmCnt) {
 		// update angle of ship
-		this.angle += this.vrot;
+		if (this.vrot !== 0) {
+			this.angle += this.vrot;
+			this.dir.rotate(this.vrot);
+		}
 
 		// add thrust vector
 		if (this.thrust !== 0) {
-			this.acc.add(
-				Vector2D.mult(new Vector2D(1, 0).rotate(this.angle), this.thrust)
-			);
+			this.acc.add(Vector2D.mult(this.dir, this.thrust));
 		}
 
 		// update gravity forces
@@ -54,11 +55,11 @@ class SpaceShip extends Attractor {
 		this.pixi.y = this.pos.y;
 		this.pixi.angle = this.angle;
 
-		if (this.upd) {
+		if (frmCnt % 2 === 0) {
+			const exhaustPos = Vector2D.add(this.pos, Vector2D.mult(this.dir, -8));
 			this.history.pop();
-			this.history.unshift(new PIXI.Point(this.pos.x, this.pos.y));
+			this.history.unshift(new PIXI.Point(exhaustPos.x, exhaustPos.y));
 		}
-		this.upd = !this.upd;
 	}
 }
 
