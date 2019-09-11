@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js';
 import Stats from 'stats.js';
 import GravitySystem from './GravitySystem';
 import MouseHandler from './MouseHandler';
+import SpaceShip from './SpaceShip';
 
 import Particle from './Particle';
 
@@ -24,10 +25,7 @@ class Engine {
 
 		this.mouseHandler = new MouseHandler(this);
 
-		// const ship = new SpaceShip(app, new Vector2D(200, 200));
-		// gravSys.add(ship);
-
-		// this.app.ticker.add(delta => this.gameLoop(delta));
+		//
 	}
 
 	addGraphics(g) {
@@ -40,13 +38,25 @@ class Engine {
 		);
 	}
 
-	update() {
+	start() {
+		this.app.ticker.add(delta => this.update(delta));
+	}
+
+	update(delta) {
 		this.stats.begin();
 
 		this.mouseHandler.update();
 		this.gravSys.update(this.frmCnt);
 		this.stats.end();
 		this.frmCnt += 1;
+	}
+
+	loadStage(fun) {
+		this.gravSys = new GravitySystem();
+		this.app.stage = new PIXI.Container();
+		const ship = new SpaceShip(this);
+		this.gravSys.add(ship);
+		fun(this);
 	}
 }
 

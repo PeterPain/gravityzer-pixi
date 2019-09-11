@@ -1,11 +1,11 @@
 import Vector2D from './Vector2D';
 
-const G = 6.674; // gravity constant
-const A = 25; // dampening factor for close distances of two objects
-
 class GravitySystem {
-	constructor() {
+	constructor(G = 6.674, A = 25, gravity = new Vector2D(0, 0.05)) {
 		this.members = [];
+		this.gravity = gravity;
+		this.G = G;
+		this.A = A;
 	}
 
 	add(o) {
@@ -17,7 +17,7 @@ class GravitySystem {
 			this.members.forEach(a1 => {
 				if (a !== a1 && !a1.isStatic) {
 					const r = a.pos.dist(a1.pos);
-					const acc = (G * a.m * r) / (r * r + A * A) ** (3 / 2);
+					const acc = (this.G * a.m * r) / (r * r + this.A * this.A) ** (3 / 2);
 					const accVec = Vector2D.sub(a.pos, a1.pos)
 						.normalize()
 						.mult(acc);
@@ -27,7 +27,10 @@ class GravitySystem {
 		});
 
 		this.members.forEach(a => {
-			a.update(frmCnt);
+			if (!a.isStatic) {
+				a.accelerate(this.gravity);
+				a.update(frmCnt);
+			}
 		});
 	}
 }

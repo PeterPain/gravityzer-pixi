@@ -2,6 +2,8 @@ import * as PIXI from 'pixi.js';
 import Attractor from './Attractor';
 import TrailPNG from '../assets/trail2.png';
 
+const colors = [0xff5555, 0x55ff55, 0x7777ff, 0xffff55, 0xffaa00];
+
 class Particle extends Attractor {
 	constructor(
 		engine,
@@ -49,7 +51,7 @@ class Particle extends Attractor {
 		this.pixi.x = this.pos.x;
 		this.pixi.y = this.pos.y;
 
-		if (frmCnt % 2 === 0) {
+		if (frmCnt % 1 === 0) {
 			this.history.pop();
 			this.history.unshift(
 				new PIXI.Point(this.pos.x / this.scale, this.pos.y / this.scale)
@@ -59,12 +61,13 @@ class Particle extends Attractor {
 }
 
 function getRandomColor() {
-	const letters = '0123456789ABCDEF';
-	let color = '0x';
-	for (let i = 0; i < 6; i += 1) {
-		color += letters[Math.floor(Math.random() * 16)];
-	}
-	return color;
+	// const letters = '0123456789ABCDEF';
+	// let color = '0x';
+	// for (let i = 0; i < 6; i += 1) {
+	// 	color += letters[Math.floor(Math.random() * 16)];
+	// }
+	// return color;
+	return colors[Math.floor(Math.random() * colors.length)];
 }
 
 export default Particle;

@@ -7,9 +7,9 @@ import ShipPNG from '../assets/ship.png';
 import KeyHandler from './KeyHandler';
 
 class SpaceShip extends Attractor {
-	constructor(app, pos) {
+	constructor(engine) {
 		// init gravity
-		super(pos, new Vector2D(0, 0), 0);
+		super(new Vector2D(200, 200), new Vector2D(0, 0), 0);
 
 		// init angle and thrust
 		this.angle = 0;
@@ -23,7 +23,7 @@ class SpaceShip extends Attractor {
 		this.pixi.y = this.pos.y;
 		this.pixi.anchor.set(0.5);
 		this.pixi.scale.set(0.3);
-		app.stage.addChild(this.pixi);
+		engine.addGraphics(this.pixi);
 
 		// init trail
 		this.history = [];
@@ -33,7 +33,7 @@ class SpaceShip extends Attractor {
 		}
 		const rope = new PIXI.SimpleRope(PIXI.Texture.from(TrailPNG), this.history);
 		rope.blendmode = PIXI.BLEND_MODES.ADD;
-		app.stage.addChild(rope);
+		engine.addGraphics(rope);
 
 		this.initControls();
 	}
