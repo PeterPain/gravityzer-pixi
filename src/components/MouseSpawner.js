@@ -1,7 +1,7 @@
 import * as PIXI from 'pixi.js';
 import Vector2D from './Vector2D';
 
-class MouseHandler {
+class MouseSpawner {
 	constructor(engine) {
 		this.engine = engine;
 		this.startCoords = new PIXI.Point(0, 0);
@@ -23,8 +23,12 @@ class MouseHandler {
 						new Vector2D(this.startCoords.x, this.startCoords.y)
 					).mult(0.05),
 					50 + Math.random() * 100,
-					false,
-					0,
+					{
+						isStatic: false,
+						polarity: 0,
+						hasGravity: true,
+						bounceFactor: 0.75
+					},
 					300
 				);
 			},
@@ -53,4 +57,4 @@ class MouseHandler {
 		this.line.visible = this.visible;
 	}
 }
-export default MouseHandler;
+export default MouseSpawner;

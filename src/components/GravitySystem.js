@@ -1,7 +1,7 @@
 import Vector2D from './Vector2D';
 
 class GravitySystem {
-	constructor(G = 6.674, A = 25, gravity = new Vector2D(0, 0.05)) {
+	constructor(G = 6.674, A = 25, gravity = new Vector2D(0, 0.2)) {
 		this.members = [];
 		this.gravity = gravity;
 		this.G = G;
@@ -27,10 +27,8 @@ class GravitySystem {
 		});
 
 		this.members.forEach(a => {
-			if (!a.isStatic) {
-				a.accelerate(this.gravity);
-				a.update(frmCnt);
-			}
+			if (a.hasGravity) a.accelerate(this.gravity);
+			if (!a.isStatic || a.hasGravity) a.update(frmCnt);
 		});
 	}
 }

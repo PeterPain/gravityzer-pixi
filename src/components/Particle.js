@@ -5,17 +5,9 @@ import TrailPNG from '../assets/trail2.png';
 const colors = [0xff5555, 0x55ff55, 0x7777ff, 0xffff55, 0xffaa00];
 
 class Particle extends Attractor {
-	constructor(
-		engine,
-		pos,
-		spd,
-		mass,
-		isStatic = false,
-		polarity = 0,
-		historySize = 100
-	) {
+	constructor(engine, pos, spd, mass, config, historySize = 100) {
 		// init gravity
-		super(pos, spd, mass, isStatic, polarity);
+		super(pos, spd, mass, config);
 
 		// init graphics
 		const col = getRandomColor();

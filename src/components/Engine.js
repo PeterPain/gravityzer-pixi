@@ -1,8 +1,9 @@
 import * as PIXI from 'pixi.js';
 import Stats from 'stats.js';
 import GravitySystem from './GravitySystem';
-import MouseHandler from './MouseHandler';
+import MouseSpawner from './MouseSpawner';
 import SpaceShip from './SpaceShip';
+import Player from './Player';
 
 import Particle from './Particle';
 
@@ -23,19 +24,15 @@ class Engine {
 
 		this.gravSys = new GravitySystem();
 
-		this.mouseHandler = new MouseHandler(this);
-
-		//
+		// this.mouseSpawner = new MouseSpawner(this);
 	}
 
 	addGraphics(g) {
 		this.app.stage.addChild(g);
 	}
 
-	addParticle(pos, spd, mass, isStatic, polarity, historySize) {
-		this.gravSys.add(
-			new Particle(this, pos, spd, mass, isStatic, polarity, historySize)
-		);
+	addParticle(pos, spd, mass, config, historySize) {
+		this.gravSys.add(new Particle(this, pos, spd, mass, config, historySize));
 	}
 
 	start() {
@@ -45,8 +42,9 @@ class Engine {
 	update(delta) {
 		this.stats.begin();
 
-		this.mouseHandler.update();
+		// this.mouseSpawner.update();
 		this.gravSys.update(this.frmCnt);
+
 		this.stats.end();
 		this.frmCnt += 1;
 	}
@@ -54,8 +52,8 @@ class Engine {
 	loadStage(fun) {
 		this.gravSys = new GravitySystem();
 		this.app.stage = new PIXI.Container();
-		const ship = new SpaceShip(this);
-		this.gravSys.add(ship);
+		const player = new Player(this);
+		this.gravSys.add(player);
 		fun(this);
 	}
 }
