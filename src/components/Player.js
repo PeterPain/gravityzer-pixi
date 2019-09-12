@@ -3,7 +3,6 @@ import Attractor from './Attractor';
 import Vector2D from './Vector2D';
 
 import KeyHandler from './KeyHandler';
-import { throws } from 'assert';
 
 class Player extends Attractor {
 	constructor(engine) {
@@ -17,6 +16,7 @@ class Player extends Attractor {
 		this.engine = engine;
 		this.moving = 0;
 		this.jmpCnt = 0;
+		this.pulling = false;
 
 		this.radius = new PIXI.Graphics();
 		this.radius.beginFill(0xff0000, 0.3);
@@ -69,22 +69,52 @@ class Player extends Attractor {
 			}
 		};
 
-		// LEFT RIGHT
+		// shoot
 		const keyShift = new KeyHandler('Alt');
 		keyShift.press = () => {
 			const mousePos = this.engine.app.renderer.plugins.interaction.mouse.global.clone();
+			const accVec = Vector2D.sub(
+				new Vector2D(mousePos.x, mousePos.y),
+				this.pos
+			).mult(0.05);
 			this.engine.addParticle(
 				this.pos.clone(),
-				Vector2D.sub(new Vector2D(mousePos.x, mousePos.y), this.pos).mult(0.05),
-				100,
+				accVec.clone(),
+				75,
 				{
 					isStatic: false,
 					polarity: 0,
 					hasGravity: true,
 					bounceFactor: 0.75
 				},
-				10
+				50
 			);
+			setTimeout(() => {
+				this.engine.addParticle(
+					this.pos.clone(),
+					accVec.clone().rotate(-10),
+					50,
+					{
+						isStatic: false,
+						polarity: 0,
+						hasGravity: true,
+						bounceFactor: 0.75
+					},
+					10
+				);
+				this.engine.addParticle(
+					this.pos.clone(),
+					accVec.clone().rotate(10),
+					50,
+					{
+						isStatic: false,
+						polarity: 0,
+						hasGravity: true,
+						bounceFactor: 0.75
+					},
+					10
+				);
+			}, 25);
 		};
 
 		// keyUp.release = () => {
@@ -95,21 +125,8 @@ class Player extends Attractor {
 			'mouseup',
 			() => {
 				this.radius.visible = false;
+				this.pulling = false;
 				const mousePos = this.engine.app.renderer.plugins.interaction.mouse.global.clone();
-				// this.engine.addParticle(
-				// 	this.pos.clone(),
-				// 	Vector2D.sub(new Vector2D(mousePos.x, mousePos.y), this.pos).mult(
-				// 		0.05
-				// 	),
-				// 	200,
-				// 	{
-				// 		isStatic: false,
-				// 		polarity: 0,
-				// 		hasGravity: true,
-				// 		bounceFactor: 0.75
-				// 	},
-				// 	10
-				// );
 				this.m = 0;
 				this.engine.gravSys.members.forEach(m => {
 					if (this.pos.dist(m.pos) < 50 && m !== this)
@@ -127,7 +144,8 @@ class Player extends Attractor {
 			'mousedown',
 			() => {
 				this.radius.visible = true;
-				this.m = 500;
+				this.m = 100;
+				this.pulling = true;
 			},
 			false
 		);
@@ -136,6 +154,17 @@ class Player extends Attractor {
 	update(frmCnt) {
 		if (this.moving !== 0) {
 			this.pos.x += this.moving;
+		}
+
+		if (this.pulling) {
+			this.engine.gravSys.members.forEach(m => {
+				if (m !== this)
+					m.accelerate(
+						Vector2D.sub(this.pos, m.pos)
+							.normalize()
+							.mult(0.25)
+					);
+			});
 		}
 
 		// update gravity forces
