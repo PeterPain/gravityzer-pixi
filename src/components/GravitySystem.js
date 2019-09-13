@@ -1,7 +1,7 @@
 import Vector2D from './Vector2D';
 
 class GravitySystem {
-	constructor(G = 6.674, A = 25, gravity = new Vector2D(0, 0.2)) {
+	constructor(G = 6.674, A = 25, gravity = new Vector2D(0, 0.1)) {
 		this.members = [];
 		this.gravity = gravity;
 		this.G = G;
@@ -23,6 +23,7 @@ class GravitySystem {
 					const accVec = Vector2D.sub(a.pos, a1.pos)
 						.normalize()
 						.mult(acc);
+
 					if (
 						a.polarity !== 0 &&
 						a1.polarity !== 0 &&
@@ -31,12 +32,17 @@ class GravitySystem {
 						accVec.mult(-1);
 
 					if (
-						((a.polarity === -1 && a1.polarity === 1) ||
-							(a.polarity === 1 && a1.polarity === -1)) &&
-						r < 5 &&
-						a.acc.dist(a1.acc) < 2
+						// ((a.polarity === -1 && a1.polarity === 1) ||
+						// 	(a.polarity === 1 && a1.polarity === -1)) &&
+						a.polarity === -a1.polarity &&
+						!a.isStatic &&
+						!a1.isStatic &&
+						r < Math.sqrt(a.m / 10) &&
+						Vector2D.sub(a1.spd, a.spd).length() > 4
+						// a.acc.dist(a1.acc) < 1
 					) {
 						this.toMerge = [i1, i];
+						if (a.m > a1.m) this.toMerge = [i, i1];
 					}
 
 					a1.accelerate(accVec);

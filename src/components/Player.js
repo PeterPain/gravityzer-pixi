@@ -106,7 +106,7 @@ class Player extends Attractor {
 					75,
 					{
 						isStatic: false,
-						polarity: -1,
+						polarity: 0,
 						hasGravity: true,
 						bounceFactor: 0.75
 					},
@@ -116,7 +116,7 @@ class Player extends Attractor {
 					this.engine.addParticle(
 						this.pos.clone(),
 						accVec.clone().rotate(-10),
-						50,
+						25,
 						{
 							isStatic: false,
 							polarity: 1,
@@ -125,19 +125,21 @@ class Player extends Attractor {
 						},
 						10
 					);
-					this.engine.addParticle(
-						this.pos.clone(),
-						accVec.clone().rotate(10),
-						50,
-						{
-							isStatic: false,
-							polarity: 1,
-							hasGravity: true,
-							bounceFactor: 0.75
-						},
-						10
-					);
-				}, 25);
+					setTimeout(() => {
+						this.engine.addParticle(
+							this.pos.clone(),
+							accVec.clone().rotate(10),
+							25,
+							{
+								isStatic: false,
+								polarity: -1,
+								hasGravity: true,
+								bounceFactor: 0.75
+							},
+							10
+						);
+					}, 75);
+				}, 75);
 			},
 			false
 		);

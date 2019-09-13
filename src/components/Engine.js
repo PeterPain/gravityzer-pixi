@@ -41,6 +41,7 @@ class Engine {
 		this.stats.begin();
 
 		this.gravSys.update();
+
 		this.gravSys.bounce(this.w, this.h);
 
 		if (this.gravSys.toMerge.length > 0) {
@@ -52,7 +53,7 @@ class Engine {
 			this.gravSys.members[this.gravSys.toMerge[0]] = new Particle(
 				this,
 				this.gravSys.members[this.gravSys.toMerge[0]].pos.clone(),
-				new Vector2D(0, 0),
+				this.gravSys.members[this.gravSys.toMerge[0]].spd.clone(),
 				mTotal
 			);
 
@@ -70,7 +71,7 @@ class Engine {
 		const bg = new PIXI.Sprite(PIXI.Texture.WHITE);
 		bg.width = this.w;
 		bg.height = this.h;
-		bg.tint = 0x777788;
+		bg.tint = 0x555566;
 		this.addGraphics(bg);
 
 		const player = new Player(this);

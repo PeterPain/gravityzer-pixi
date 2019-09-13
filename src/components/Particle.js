@@ -35,7 +35,7 @@ class Particle extends Attractor {
 		this.pixi = new PIXI.Graphics();
 		this.pixi.lineStyle(1, edgeCol);
 		this.pixi.beginFill(fillCol);
-		this.pixi.drawCircle(0, 0, 0.0002 * mass * mass);
+		this.pixi.drawCircle(0, 0, Math.sqrt(mass / 10));
 		this.pixi.endFill();
 		this.pixi.x = this.pos.x;
 		this.pixi.y = this.pos.y;
@@ -43,7 +43,7 @@ class Particle extends Attractor {
 
 		// init trail
 		this.history = [];
-		this.scale = mass / 200;
+		this.scale = Math.sqrt(mass / 10) / 5;
 		for (let i = 0; i < historySize; i += 1) {
 			this.history.push(
 				new PIXI.Point(this.pos.x / this.scale, this.pos.y / this.scale)
