@@ -5,14 +5,36 @@ import TrailPNG from '../assets/trail2.png';
 const colors = [0xff5555, 0x55ff55, 0x7777ff, 0xffff55, 0xffaa00];
 
 class Particle extends Attractor {
-	constructor(engine, pos, spd, mass, config, historySize = 100) {
+	constructor(
+		engine,
+		pos,
+		spd,
+		mass,
+		config = {
+			isStatic: false,
+			polarity: 0,
+			hasGravity: true,
+			bounceFactor: 0.75
+		},
+		historySize = 100
+	) {
 		// init gravity
 		super(pos, spd, mass, config);
 
 		// init graphics
-		const col = getRandomColor();
+		let fillCol = getRandomColor();
+		let edgeCol = fillCol;
+		if (config.polarity === 1) {
+			fillCol = 0xffffff;
+			edgeCol = 0x000000;
+		} else if (config.polarity === -1) {
+			fillCol = 0x000000;
+			edgeCol = 0xffffff;
+		}
+
 		this.pixi = new PIXI.Graphics();
-		this.pixi.beginFill(col);
+		this.pixi.lineStyle(1, edgeCol);
+		this.pixi.beginFill(fillCol);
 		this.pixi.drawCircle(0, 0, 0.0002 * mass * mass);
 		this.pixi.endFill();
 		this.pixi.x = this.pos.x;
@@ -27,28 +49,28 @@ class Particle extends Attractor {
 				new PIXI.Point(this.pos.x / this.scale, this.pos.y / this.scale)
 			);
 		}
-		const rope = new PIXI.SimpleRope(PIXI.Texture.from(TrailPNG), this.history);
-		rope.scale.set(this.scale);
-		rope.tint = col;
-		rope.alpha = 0.75;
-		rope.blendmode = PIXI.BLEND_MODES.ADD;
-		engine.addGraphics(rope);
+		this.rope = new PIXI.SimpleRope(PIXI.Texture.from(TrailPNG), this.history);
+		this.rope.scale.set(this.scale);
+		this.rope.tint = fillCol;
+		this.rope.alpha = 0.75;
+		this.rope.blendmode = PIXI.BLEND_MODES.ADD;
+		engine.addGraphics(this.rope);
 	}
 
-	update(frmCnt) {
-		// update gravity forces
-		super.update();
-
+	render() {
 		// update graphics
 		this.pixi.x = this.pos.x;
 		this.pixi.y = this.pos.y;
 
-		if (frmCnt % 1 === 0) {
-			this.history.pop();
-			this.history.unshift(
-				new PIXI.Point(this.pos.x / this.scale, this.pos.y / this.scale)
-			);
-		}
+		this.history.pop();
+		this.history.unshift(
+			new PIXI.Point(this.pos.x / this.scale, this.pos.y / this.scale)
+		);
+	}
+
+	disable() {
+		this.pixi.visible = false;
+		this.rope.visible = false;
 	}
 }
 

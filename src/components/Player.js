@@ -72,86 +72,78 @@ class Player extends Attractor {
 		// shoot
 		const keyShift = new KeyHandler('Alt');
 		keyShift.press = () => {
-			const mousePos = this.engine.app.renderer.plugins.interaction.mouse.global.clone();
-			const accVec = Vector2D.sub(
-				new Vector2D(mousePos.x, mousePos.y),
-				this.pos
-			).mult(0.05);
-			this.engine.addParticle(
-				this.pos.clone(),
-				accVec.clone(),
-				75,
-				{
-					isStatic: false,
-					polarity: 0,
-					hasGravity: true,
-					bounceFactor: 0.75
-				},
-				50
-			);
-			setTimeout(() => {
-				this.engine.addParticle(
-					this.pos.clone(),
-					accVec.clone().rotate(-10),
-					50,
-					{
-						isStatic: false,
-						polarity: 0,
-						hasGravity: true,
-						bounceFactor: 0.75
-					},
-					10
-				);
-				this.engine.addParticle(
-					this.pos.clone(),
-					accVec.clone().rotate(10),
-					50,
-					{
-						isStatic: false,
-						polarity: 0,
-						hasGravity: true,
-						bounceFactor: 0.75
-					},
-					10
-				);
-			}, 25);
+			this.radius.visible = true;
+			this.m = 100;
+			this.pulling = true;
 		};
 
-		// keyUp.release = () => {
-		// 	this.thrust = 0;
-		// };
-
-		window.addEventListener(
-			'mouseup',
-			() => {
-				this.radius.visible = false;
-				this.pulling = false;
-				const mousePos = this.engine.app.renderer.plugins.interaction.mouse.global.clone();
-				this.m = 0;
-				this.engine.gravSys.members.forEach(m => {
-					if (this.pos.dist(m.pos) < 50 && m !== this)
-						m.accelerate(
-							Vector2D.sub(new Vector2D(mousePos.x, mousePos.y), this.pos)
-								.normalize()
-								.mult(15)
-						);
-				});
-			},
-			false
-		);
+		keyShift.release = () => {
+			this.radius.visible = false;
+			this.pulling = false;
+			const mousePos = this.engine.app.renderer.plugins.interaction.mouse.global.clone();
+			this.m = 0;
+			this.engine.gravSys.members.forEach(m => {
+				if (this.pos.dist(m.pos) < 50 && m !== this)
+					m.accelerate(
+						Vector2D.sub(new Vector2D(mousePos.x, mousePos.y), this.pos)
+							.normalize()
+							.mult(15)
+					);
+			});
+		};
 
 		window.addEventListener(
 			'mousedown',
 			() => {
-				this.radius.visible = true;
-				this.m = 100;
-				this.pulling = true;
+				const mousePos = this.engine.app.renderer.plugins.interaction.mouse.global.clone();
+				const accVec = Vector2D.sub(
+					new Vector2D(mousePos.x, mousePos.y),
+					this.pos
+				).mult(0.05);
+				this.engine.addParticle(
+					this.pos.clone(),
+					accVec.clone(),
+					75,
+					{
+						isStatic: false,
+						polarity: -1,
+						hasGravity: true,
+						bounceFactor: 0.75
+					},
+					50
+				);
+				setTimeout(() => {
+					this.engine.addParticle(
+						this.pos.clone(),
+						accVec.clone().rotate(-10),
+						50,
+						{
+							isStatic: false,
+							polarity: 1,
+							hasGravity: true,
+							bounceFactor: 0.75
+						},
+						10
+					);
+					this.engine.addParticle(
+						this.pos.clone(),
+						accVec.clone().rotate(10),
+						50,
+						{
+							isStatic: false,
+							polarity: 1,
+							hasGravity: true,
+							bounceFactor: 0.75
+						},
+						10
+					);
+				}, 25);
 			},
 			false
 		);
 	}
 
-	update(frmCnt) {
+	update() {
 		if (this.moving !== 0) {
 			this.pos.x += this.moving;
 		}
@@ -170,7 +162,9 @@ class Player extends Attractor {
 		// update gravity forces
 		super.update();
 		if (this.pos.y > 799) this.jmpCnt = 0;
+	}
 
+	render() {
 		// update graphics
 		this.pixi.x = this.pos.x;
 		this.pixi.y = this.pos.y;
