@@ -3,39 +3,42 @@ import Attractor from './Attractor';
 import Vector2D from './Vector2D';
 
 import KeyHandler from './KeyHandler';
+import EngineObject from './EngineObject';
 
-class Player extends Attractor {
+class Player extends EngineObject {
 	constructor(engine) {
 		// init gravity
-		super(new Vector2D(200, 750), new Vector2D(0, 0), 0, {
-			isStatic: true,
-			polarity: 0,
-			hasGravity: true,
-			bounceFactor: 0
-		});
+		const graphics = new PIXI.Graphics();
+		const g1 = new PIXI.Graphics();
+		g1.beginFill(0xff0000, 0.3);
+		g1.drawCircle(0, 0, 50);
+		g1.endFill();
+		g1.pivot.set(0, 5);
+		g1.visible = false;
+		graphics.addChild(g1);
+
+		const g2 = new PIXI.Graphics();
+		g2.lineStyle(2, 0xffffff);
+		g2.drawRect(0, 0, 10, 10);
+		g2.pivot.set(5, 10);
+
+		graphics.addChild(g2);
+
+		super(
+			new Attractor(new Vector2D(200, 750), new Vector2D(0, 0), 0, {
+				isStatic: true,
+				polarity: 0,
+				hasGravity: true,
+				bounceFactor: 0
+			}),
+			graphics
+		);
 		this.engine = engine;
 		this.moving = 0;
 		this.jmpCnt = 0;
 		this.pulling = false;
 
-		this.radius = new PIXI.Graphics();
-		this.radius.beginFill(0xff0000, 0.3);
-		this.radius.drawCircle(0, 0, 50);
-		this.radius.endFill();
-		this.radius.x = this.pos.x;
-		this.radius.y = this.pos.y;
-		this.radius.pivot.set(0, 5);
-		this.radius.visible = false;
-		this.engine.addGraphics(this.radius);
-
-		this.pixi = new PIXI.Graphics();
-		this.pixi.lineStyle(2, 0xffffff);
-		this.pixi.drawRect(0, 0, 10, 10);
-		this.pixi.x = this.pos.x;
-		this.pixi.y = this.pos.y;
-		this.pixi.pivot.set(5, 10);
-
-		this.engine.addGraphics(this.pixi);
+		this.g1 = g1;
 
 		this.initControls();
 	}
@@ -64,7 +67,7 @@ class Player extends Attractor {
 		const keyUp = new KeyHandler(' ');
 		keyUp.press = () => {
 			if (this.jmpCnt < 2) {
-				this.acc.add(new Vector2D(0, -5));
+				this.physics.spd.add(new Vector2D(0, -5));
 				this.jmpCnt += 1;
 			}
 		};
@@ -72,20 +75,21 @@ class Player extends Attractor {
 		// shoot
 		const keyShift = new KeyHandler('Alt');
 		keyShift.press = () => {
-			this.radius.visible = true;
+			this.g1.visible = true;
 			this.m = 100;
 			this.pulling = true;
 		};
 
 		keyShift.release = () => {
-			this.radius.visible = false;
+			this.g1.visible = false;
 			this.pulling = false;
 			const mousePos = this.engine.app.renderer.plugins.interaction.mouse.global.clone();
 			this.m = 0;
-			this.engine.gravSys.members.forEach(m => {
-				if (this.pos.dist(m.pos) < 50 && m !== this)
+			this.engine.objects.forEach(o => {
+				const m = o.physics;
+				if (this.physics.pos.dist(m.pos) < 50 && m !== this.physics)
 					m.accelerate(
-						Vector2D.sub(new Vector2D(mousePos.x, mousePos.y), this.pos)
+						Vector2D.sub(new Vector2D(mousePos.x, mousePos.y), this.physics.pos)
 							.normalize()
 							.mult(15)
 					);
@@ -98,10 +102,10 @@ class Player extends Attractor {
 				const mousePos = this.engine.app.renderer.plugins.interaction.mouse.global.clone();
 				const accVec = Vector2D.sub(
 					new Vector2D(mousePos.x, mousePos.y),
-					this.pos
+					this.physics.pos
 				).mult(0.05);
 				this.engine.addParticle(
-					this.pos.clone(),
+					this.physics.pos.clone(),
 					accVec.clone(),
 					75,
 					{
@@ -114,7 +118,7 @@ class Player extends Attractor {
 				);
 				setTimeout(() => {
 					this.engine.addParticle(
-						this.pos.clone(),
+						this.physics.pos.clone(),
 						accVec.clone().rotate(-10),
 						25,
 						{
@@ -127,7 +131,7 @@ class Player extends Attractor {
 					);
 					setTimeout(() => {
 						this.engine.addParticle(
-							this.pos.clone(),
+							this.physics.pos.clone(),
 							accVec.clone().rotate(10),
 							25,
 							{
@@ -147,14 +151,15 @@ class Player extends Attractor {
 
 	update() {
 		if (this.moving !== 0) {
-			this.pos.x += this.moving;
+			this.physics.pos.x += this.moving;
 		}
 
 		if (this.pulling) {
-			this.engine.gravSys.members.forEach(m => {
-				if (m !== this)
+			this.engine.objects.forEach(o => {
+				const m = o.physics;
+				if (m !== this.physics)
 					m.accelerate(
-						Vector2D.sub(this.pos, m.pos)
+						Vector2D.sub(this.physics.pos, m.pos)
 							.normalize()
 							.mult(0.25)
 					);
@@ -163,15 +168,7 @@ class Player extends Attractor {
 
 		// update gravity forces
 		super.update();
-		if (this.pos.y > 799) this.jmpCnt = 0;
-	}
-
-	render() {
-		// update graphics
-		this.pixi.x = this.pos.x;
-		this.pixi.y = this.pos.y;
-		this.radius.x = this.pixi.x;
-		this.radius.y = this.pixi.y;
+		if (this.physics.pos.y > 799) this.jmpCnt = 0;
 	}
 }
 

@@ -16,9 +16,9 @@ class Attractor {
 		this.acc.add(v);
 	}
 
-	update() {
-		this.spd.add(this.acc);
-		this.pos.add(this.spd);
+	update(dt = 1) {
+		this.spd.add(Vector2D.mult(this.acc, dt));
+		this.pos.add(Vector2D.mult(this.spd, dt));
 		this.acc.mult(0);
 	}
 

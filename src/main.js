@@ -1,6 +1,7 @@
 import Vector2D from './components/Vector2D';
 import Engine from './components/Engine';
 import './main.css';
+import Particle from './components/Particle';
 
 const engine = new Engine(1500, 800);
 
@@ -37,28 +38,40 @@ engine.loadStage(e => {
 	// 	100
 	// );
 
-	e.addParticle(
-		new Vector2D(0, 400),
-		new Vector2D(2, 2),
-		250,
-		{ isStatic: false, polarity: 0, hasGravity: false, bounceFactor: 0.75 },
-		100
+	e.addObject(
+		new Particle(
+			new Vector2D(0, 400),
+			new Vector2D(2, 2),
+			250,
+			{ isStatic: false, polarity: 0, hasGravity: true, bounceFactor: 0.75 },
+			100
+		)
 	);
 
-	for (let i = 0; i < 7; i += 1) {
-		e.addParticle(
-			new Vector2D(150 + 200 * i, 400),
-			new Vector2D(0, 0),
-			500,
-			{
-				isStatic: true,
-				polarity: i % 2 === 0 ? -1 : 1,
-				hasGravity: false,
-				bounceFactor: 0.75
-			},
-			200
-		);
-	}
+	e.addObject(
+		new Particle(
+			new Vector2D(1500, 400),
+			new Vector2D(-2, 2),
+			250,
+			{ isStatic: false, polarity: 0, hasGravity: false, bounceFactor: 0.75 },
+			100
+		)
+	);
+
+	// for (let i = 0; i < 7; i += 1) {
+	// 	e.addParticle(
+	// 		new Vector2D(150 + 200 * i, 400),
+	// 		new Vector2D(0, 0),
+	// 		500,
+	// 		{
+	// 			isStatic: true,
+	// 			polarity: i % 2 === 0 ? -1 : 1,
+	// 			hasGravity: false,
+	// 			bounceFactor: 0.75
+	// 		},
+	// 		200
+	// 	);
+	// }
 });
 
 engine.start();

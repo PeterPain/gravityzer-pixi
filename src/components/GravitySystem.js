@@ -2,21 +2,17 @@ import Vector2D from './Vector2D';
 
 class GravitySystem {
 	constructor(G = 6.674, A = 25, gravity = new Vector2D(0, 0.1)) {
-		this.members = [];
 		this.gravity = gravity;
 		this.G = G;
 		this.A = A;
-		this.toMerge = [];
 	}
 
-	add(o) {
-		this.members.push(o);
-	}
-
-	update() {
-		this.toMerge = [];
-		this.members.forEach((a, i) => {
-			this.members.forEach((a1, i1) => {
+	update(objects) {
+		let toMerge = [];
+		objects.forEach((o, i) => {
+			const a = o.physics;
+			objects.forEach((o1, i1) => {
+				const a1 = o1.physics;
 				if (a !== a1 && !a1.isStatic) {
 					const r = a.pos.dist(a1.pos);
 					const acc = (this.G * a.m * r) / (r * r + this.A * this.A) ** (3 / 2);
@@ -41,8 +37,8 @@ class GravitySystem {
 						Vector2D.sub(a1.spd, a.spd).length() > 4
 						// a.acc.dist(a1.acc) < 1
 					) {
-						this.toMerge = [i1, i];
-						if (a.m > a1.m) this.toMerge = [i, i1];
+						toMerge = [i1, i];
+						if (a.m > a1.m) toMerge = [i, i1];
 					}
 
 					a1.accelerate(accVec);
@@ -50,22 +46,13 @@ class GravitySystem {
 			});
 		});
 
-		this.members.forEach(a => {
+		objects.forEach(o => {
+			const a = o.physics;
 			if (a.hasGravity) a.accelerate(this.gravity);
-			if (!a.isStatic || a.hasGravity) a.update();
+			if (!a.isStatic || a.hasGravity) o.update();
 		});
-	}
 
-	bounce(w, h) {
-		this.members.forEach(member => {
-			member.bounce(w, h);
-		});
-	}
-
-	render() {
-		this.members.forEach(member => {
-			member.render();
-		});
+		return toMerge;
 	}
 }
 

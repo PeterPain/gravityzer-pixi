@@ -16,6 +16,7 @@ class Engine {
 
 		this.w = width;
 		this.h = height;
+		this.objects = [];
 		this.stats = new Stats();
 		this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
 
@@ -26,11 +27,22 @@ class Engine {
 	}
 
 	addGraphics(g) {
-		this.app.stage.addChild(g);
+		if (Array.isArray(g)) {
+			g.forEach(graphics => {
+				this.app.stage.addChild(graphics);
+			});
+		} else {
+			this.app.stage.addChild(g);
+		}
 	}
 
 	addParticle(pos, spd, mass, config, historySize) {
-		this.gravSys.add(new Particle(this, pos, spd, mass, config, historySize));
+		this.addObject(new Particle(pos, spd, mass, config, historySize));
+	}
+
+	addObject(o) {
+		this.objects.push(o);
+		this.addGraphics(o.graphics);
 	}
 
 	start() {
@@ -40,27 +52,30 @@ class Engine {
 	update() {
 		this.stats.begin();
 
-		this.gravSys.update();
+		const toMerge = this.gravSys.update(this.objects);
 
-		this.gravSys.bounce(this.w, this.h);
+		this.bounce();
 
-		if (this.gravSys.toMerge.length > 0) {
-			this.gravSys.members[this.gravSys.toMerge[0]].disable();
-			this.gravSys.members[this.gravSys.toMerge[1]].disable();
+		if (toMerge.length > 0) {
+			this.objects[toMerge[0]].disable();
+			this.objects[toMerge[1]].disable();
 			const mTotal =
-				this.gravSys.members[this.gravSys.toMerge[0]].m +
-				this.gravSys.members[this.gravSys.toMerge[1]].m;
-			this.gravSys.members[this.gravSys.toMerge[0]] = new Particle(
-				this,
-				this.gravSys.members[this.gravSys.toMerge[0]].pos.clone(),
-				this.gravSys.members[this.gravSys.toMerge[0]].spd.clone(),
+				this.objects[toMerge[0]].physics.m + this.objects[toMerge[1]].physics.m;
+			this.objects[toMerge[0]] = new Particle(
+				this.objects[toMerge[0]].physics.pos.clone(),
+				this.objects[toMerge[0]].physics.spd.clone(),
 				mTotal
 			);
+			this.addGraphics(this.objects[toMerge[0]].graphics);
 
-			this.gravSys.members.splice(this.gravSys.toMerge[1], 1);
+			this.objects.splice(toMerge[1], 1);
 		}
 
-		this.gravSys.render();
+		this.objects.forEach(o => {
+			o.render();
+		});
+
+		// this.gravSys.render();
 
 		this.stats.end();
 	}
@@ -75,8 +90,14 @@ class Engine {
 		this.addGraphics(bg);
 
 		const player = new Player(this);
-		this.gravSys.add(player);
+		this.addObject(player);
 		fun(this);
+	}
+
+	bounce() {
+		this.objects.forEach(member => {
+			member.physics.bounce(this.w, this.h);
+		});
 	}
 }
 

@@ -1,12 +1,12 @@
 import * as PIXI from 'pixi.js';
 import Attractor from './Attractor';
 import TrailPNG from '../assets/trail2.png';
+import EngineObject from './EngineObject';
 
 const colors = [0xff5555, 0x55ff55, 0x7777ff, 0xffff55, 0xffaa00];
 
-class Particle extends Attractor {
+class Particle extends EngineObject {
 	constructor(
-		engine,
 		pos,
 		spd,
 		mass,
@@ -18,9 +18,6 @@ class Particle extends Attractor {
 		},
 		historySize = 100
 	) {
-		// init gravity
-		super(pos, spd, mass, config);
-
 		// init graphics
 		let fillCol = getRandomColor();
 		let edgeCol = fillCol;
@@ -32,45 +29,42 @@ class Particle extends Attractor {
 			edgeCol = 0xffffff;
 		}
 
-		this.pixi = new PIXI.Graphics();
-		this.pixi.lineStyle(1, edgeCol);
-		this.pixi.beginFill(fillCol);
-		this.pixi.drawCircle(0, 0, Math.sqrt(mass / 10));
-		this.pixi.endFill();
-		this.pixi.x = this.pos.x;
-		this.pixi.y = this.pos.y;
-		engine.addGraphics(this.pixi);
+		const circle = new PIXI.Graphics();
+		circle.lineStyle(1, edgeCol);
+		circle.beginFill(fillCol);
+		circle.drawCircle(0, 0, Math.sqrt(mass / 10));
+		circle.endFill();
 
 		// init trail
-		this.history = [];
-		this.scale = Math.sqrt(mass / 10) / 5;
+		const history = [];
+		const scale = Math.sqrt(mass / 10) / 5;
 		for (let i = 0; i < historySize; i += 1) {
-			this.history.push(
-				new PIXI.Point(this.pos.x / this.scale, this.pos.y / this.scale)
-			);
+			history.push(new PIXI.Point(pos.x / scale, pos.y / scale));
 		}
-		this.rope = new PIXI.SimpleRope(PIXI.Texture.from(TrailPNG), this.history);
-		this.rope.scale.set(this.scale);
-		this.rope.tint = fillCol;
-		this.rope.alpha = 0.75;
-		this.rope.blendmode = PIXI.BLEND_MODES.ADD;
-		engine.addGraphics(this.rope);
+		const rope = new PIXI.SimpleRope(PIXI.Texture.from(TrailPNG), history);
+		rope.scale.set(scale);
+		rope.tint = fillCol;
+		rope.alpha = 0.75;
+		rope.blendmode = PIXI.BLEND_MODES.ADD;
+
+		// init gravity
+		super(new Attractor(pos, spd, mass, config), [circle, rope]);
+		this.scale = scale;
+		this.history = history;
 	}
 
 	render() {
 		// update graphics
-		this.pixi.x = this.pos.x;
-		this.pixi.y = this.pos.y;
+		this.graphics[0].x = this.physics.pos.x;
+		this.graphics[0].y = this.physics.pos.y;
 
 		this.history.pop();
 		this.history.unshift(
-			new PIXI.Point(this.pos.x / this.scale, this.pos.y / this.scale)
+			new PIXI.Point(
+				this.physics.pos.x / this.scale,
+				this.physics.pos.y / this.scale
+			)
 		);
-	}
-
-	disable() {
-		this.pixi.visible = false;
-		this.rope.visible = false;
 	}
 }
 
