@@ -4,8 +4,8 @@ class EngineObject {
 		this.graphics = g;
 	}
 
-	update() {
-		this.physics.update();
+	update(dt) {
+		this.physics.update(dt);
 	}
 
 	render() {

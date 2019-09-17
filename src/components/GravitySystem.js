@@ -5,6 +5,7 @@ class GravitySystem {
 		this.gravity = gravity;
 		this.G = G;
 		this.A = A;
+		this.dt = 0.1;
 	}
 
 	update(objects) {
@@ -28,14 +29,11 @@ class GravitySystem {
 						accVec.mult(-1);
 
 					if (
-						// ((a.polarity === -1 && a1.polarity === 1) ||
-						// 	(a.polarity === 1 && a1.polarity === -1)) &&
 						a.polarity === -a1.polarity &&
 						!a.isStatic &&
 						!a1.isStatic &&
 						r < Math.sqrt(a.m / 10) &&
-						Vector2D.sub(a1.spd, a.spd).length() > 4
-						// a.acc.dist(a1.acc) < 1
+						Vector2D.sub(a1.spd, a.spd).length() > 20
 					) {
 						toMerge = [i1, i];
 						if (a.m > a1.m) toMerge = [i, i1];
@@ -49,7 +47,7 @@ class GravitySystem {
 		objects.forEach(o => {
 			const a = o.physics;
 			if (a.hasGravity) a.accelerate(this.gravity);
-			if (!a.isStatic || a.hasGravity) o.update();
+			if (!a.isStatic || a.hasGravity) o.update(this.dt);
 		});
 
 		return toMerge;

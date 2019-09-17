@@ -53,25 +53,25 @@ engine.loadStage(e => {
 			new Vector2D(1500, 400),
 			new Vector2D(-2, 2),
 			250,
-			{ isStatic: false, polarity: 0, hasGravity: false, bounceFactor: 0.75 },
+			{ isStatic: false, polarity: 0, hasGravity: true, bounceFactor: 0.75 },
 			100
 		)
 	);
 
-	// for (let i = 0; i < 7; i += 1) {
-	// 	e.addParticle(
-	// 		new Vector2D(150 + 200 * i, 400),
-	// 		new Vector2D(0, 0),
-	// 		500,
-	// 		{
-	// 			isStatic: true,
-	// 			polarity: i % 2 === 0 ? -1 : 1,
-	// 			hasGravity: false,
-	// 			bounceFactor: 0.75
-	// 		},
-	// 		200
-	// 	);
-	// }
+	for (let i = 0; i < 7; i += 1) {
+		e.addParticle(
+			new Vector2D(150 + 200 * i, 400),
+			new Vector2D(0, 0),
+			500,
+			{
+				isStatic: false,
+				polarity: i % 2 === 0 ? -1 : 1,
+				hasGravity: true,
+				bounceFactor: 0.75
+			},
+			200
+		);
+	}
 });
 
 engine.start();

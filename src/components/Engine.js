@@ -75,8 +75,6 @@ class Engine {
 			o.render();
 		});
 
-		// this.gravSys.render();
-
 		this.stats.end();
 	}
 
@@ -87,6 +85,7 @@ class Engine {
 		bg.width = this.w;
 		bg.height = this.h;
 		bg.tint = 0x555566;
+		bg.tint = 0x222244;
 		this.addGraphics(bg);
 
 		const player = new Player(this);

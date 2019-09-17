@@ -73,14 +73,14 @@ class Player extends EngineObject {
 		};
 
 		// shoot
-		const keyShift = new KeyHandler('Alt');
-		keyShift.press = () => {
+		const keyAlt = new KeyHandler('Alt');
+		keyAlt.press = () => {
 			this.g1.visible = true;
 			this.m = 100;
 			this.pulling = true;
 		};
 
-		keyShift.release = () => {
+		keyAlt.release = () => {
 			this.g1.visible = false;
 			this.pulling = false;
 			const mousePos = this.engine.app.renderer.plugins.interaction.mouse.global.clone();
@@ -104,18 +104,18 @@ class Player extends EngineObject {
 					new Vector2D(mousePos.x, mousePos.y),
 					this.physics.pos
 				).mult(0.05);
-				this.engine.addParticle(
-					this.physics.pos.clone(),
-					accVec.clone(),
-					75,
-					{
-						isStatic: false,
-						polarity: 0,
-						hasGravity: true,
-						bounceFactor: 0.75
-					},
-					50
-				);
+				// this.engine.addParticle(
+				// 	this.physics.pos.clone(),
+				// 	accVec.clone(),
+				// 	75,
+				// 	{
+				// 		isStatic: false,
+				// 		polarity: 0,
+				// 		hasGravity: true,
+				// 		bounceFactor: 0.75
+				// 	},
+				// 	50
+				// );
 				setTimeout(() => {
 					this.engine.addParticle(
 						this.physics.pos.clone(),
@@ -149,7 +149,7 @@ class Player extends EngineObject {
 		);
 	}
 
-	update() {
+	update(dt) {
 		if (this.moving !== 0) {
 			this.physics.pos.x += this.moving;
 		}
@@ -167,7 +167,7 @@ class Player extends EngineObject {
 		}
 
 		// update gravity forces
-		super.update();
+		super.update(dt);
 		if (this.physics.pos.y > 799) this.jmpCnt = 0;
 	}
 }
