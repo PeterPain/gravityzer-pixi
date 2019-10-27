@@ -5,7 +5,7 @@ class GravitySystem {
 		this.gravity = gravity;
 		this.G = G;
 		this.A = A;
-		this.dt = 0.1;
+		this.dt = 0.5; // speed of simulation ww
 	}
 
 	update(objects) {

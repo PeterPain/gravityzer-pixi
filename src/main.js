@@ -6,37 +6,37 @@ import Particle from './components/Particle';
 const engine = new Engine(1500, 800);
 
 engine.loadStage(e => {
-	// e.addParticle(
-	// 	new Vector2D(750, 400),
-	// 	new Vector2D(0, 0),
-	// 	1000,
-	// 	{ isStatic: true, polarity: 1, hasGravity: false, bounceFactor: 0.75 },
-	// 	1
-	// );
+	e.addParticle(
+		new Vector2D(750, 400),
+		new Vector2D(0, 0),
+		1000,
+		{ isStatic: true, polarity: 1, hasGravity: false, bounceFactor: 0.75 },
+		1
+	);
 
-	// e.addParticle(
-	// 	new Vector2D(650, 400),
-	// 	new Vector2D(0, 0),
-	// 	250,
-	// 	{ isStatic: false, polarity: -1, hasGravity: false, bounceFactor: 0.75 },
-	// 	100
-	// );
+	e.addParticle(
+		new Vector2D(650, 400),
+		new Vector2D(0, 0),
+		250,
+		{ isStatic: false, polarity: -1, hasGravity: false, bounceFactor: 0.75 },
+		100
+	);
 
-	// e.addParticle(
-	// 	new Vector2D(850, 400),
-	// 	new Vector2D(0, 0),
-	// 	250,
-	// 	{ isStatic: false, polarity: -1, hasGravity: false, bounceFactor: 0.75 },
-	// 	100
-	// );
+	e.addParticle(
+		new Vector2D(850, 400),
+		new Vector2D(0, 0),
+		250,
+		{ isStatic: false, polarity: 0, hasGravity: false, bounceFactor: 0.75 },
+		100
+	);
 
-	// e.addParticle(
-	// 	new Vector2D(750, 500),
-	// 	new Vector2D(0, 0),
-	// 	250,
-	// 	{ isStatic: false, polarity: -1, hasGravity: false, bounceFactor: 0.75 },
-	// 	100
-	// );
+	e.addParticle(
+		new Vector2D(750, 500),
+		new Vector2D(0, 0),
+		250,
+		{ isStatic: false, polarity: 0, hasGravity: false, bounceFactor: 0.75 },
+		100
+	);
 
 	e.addObject(
 		new Particle(
@@ -58,20 +58,20 @@ engine.loadStage(e => {
 		)
 	);
 
-	for (let i = 0; i < 7; i += 1) {
-		e.addParticle(
-			new Vector2D(150 + 200 * i, 400),
-			new Vector2D(0, 0),
-			500,
-			{
-				isStatic: false,
-				polarity: i % 2 === 0 ? -1 : 1,
-				hasGravity: true,
-				bounceFactor: 0.75
-			},
-			200
-		);
-	}
+	// for (let i = 0; i < 7; i += 1) {
+	// 	e.addParticle(
+	// 		new Vector2D(150 + 200 * i, 400),
+	// 		new Vector2D(0, 0),
+	// 		500,
+	// 		{
+	// 			isStatic: false,
+	// 			polarity: i % 2 === 0 ? -1 : 1,
+	// 			hasGravity: true,
+	// 			bounceFactor: 0.75
+	// 		},
+	// 		200
+	// 	);
+	// }
 });
 
 engine.start();
