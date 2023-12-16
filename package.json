@@ -35,5 +35,6 @@
 	"dependencies": {
 		"pixi.js": "^5.1.5",
 		"stats.js": "^0.17.0"
-	}
+	},
+	"packageManager": "pnpm@8.13.0+sha256.fbcf256db6d06bc189e31df34b3ed61220f3ba9f78a2ca8fe7be0fce4670dbd3"
 }
